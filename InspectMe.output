@@ -1,0 +1,55 @@
+## Output del InspectME sobre una VM
+
+<MiqAeWorkspace>
+	-<MiqAeObject namespace="SYSTEM" class="PROCESS" instance="Request">
+	-<MiqAeAttribute name="miq_server">
+		-<send object_id="101598900" id="602000000000001">
+			MiqAeServiceMiqServer
+		</send>
+	</MiqAeAttribute>
+	-<MiqAeAttribute name="miq_server_id">
+		-<String>
+			602000000000001
+		</String>
+	</MiqAeAttribute>
+	-<MiqAeAttribute name="object_name">
+		-<String>
+			Request
+		</String>
+	</MiqAeAttribute>
+	-<MiqAeAttribute name="request">
+		-<String>
+			InspectME
+		</String>
+	</MiqAeAttribute>
+	-<MiqAeAttribute name="user">
+		-<send object_id="101629840" id="602000000000001">
+			MiqAeServiceUser
+		</send>
+	</MiqAeAttribute>
+	-<MiqAeAttribute name="user_id">
+		-<String>
+			602000000000001
+		</String>
+	</MiqAeAttribute>
+	-<MiqAeAttribute name="vm">
+		-<send object_id="85560120" id="602000000000027">
+			MiqAeServiceVmRedhat
+		</send>
+	</MiqAeAttribute>
+	-<MiqAeAttribute name="vm_id">
+		-<String>
+			602000000000027
+		</String>
+	</MiqAeAttribute>
+	-<MiqAeAttribute name="vmdb_object_type">
+		-<String>
+			vm
+		</String>
+	</MiqAeAttribute>
+	-<MiqAeObject namespace="System" class="Request" instance="InspectME">
+		-<MiqAeObject namespace="Sample" class="Methods" instance="InspectME">
+		</MiqAeObject>
+	</MiqAeObject>
+	</MiqAeObject>
+</MiqAeWorkspace>
