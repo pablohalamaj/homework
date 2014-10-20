@@ -6,3 +6,11 @@
 #	but the resulting VM will have the "cloned" Tag.
 #
 ###################################
+
+# Get vm from root object
+#   vm = $evm.root['vm']
+#     raise "#{@method} - VM object not found" if vm.nil?
+#
+#       # Get root attributes passed in from the service dialog
+#         vram   = $evm.root['vram'].to_i
+#
