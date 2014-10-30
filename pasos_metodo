@@ -1,0 +1,5 @@
+
+metodo1: Validar si la VM tiene TAG "clone" , si lo tiene salir
+metodo2: clonar la VM --> Como???
+metodo3: /Student/ipam/get_ip --> Registra IP
+metodo4: tagueo la VM
