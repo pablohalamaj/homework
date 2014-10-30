@@ -25,7 +25,7 @@ begin
   #Find the tags of the vm  with the least number of vms
   tagged_vm	= nil
   tag		= "cloned"
-  tagged_vm     = $evm.vmdb(:vm).find_tagged_with(:all => tag, :ns => "*")
+  tagged_vm     = $evm.vmdb(:vm).tagged_with(:Custom_Tags,"cloned")
   $evm.log("info", "<#{@method}>--Got #{tagged_vm} Hosts tagged with #{tag}")
 
   if tagged_vm == nil
