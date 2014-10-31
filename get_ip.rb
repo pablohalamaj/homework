@@ -5,6 +5,7 @@
 #
 $evm.log("info", "********* InfoBlox - GetIP STARTED *********")
 
+
 require 'rest_client'
 require 'json'
 require 'nokogiri'
@@ -32,13 +33,13 @@ end
 ##################################
 def nextIP(network)
   begin
-    $evm.log("info", "GetIP --> NextIP on - #{network}")
+    $evm.log("info", "my_GetIP --> NextIP on - #{network}")
     url = 'https://' + @connection + '/wapi/v1.2.1/' + network
     dooie = RestClient.post url, :_function => 'next_available_ip', :num => '1'
     doc = Nokogiri::XML(dooie)
     root = doc.root
     nextip = root.xpath("ips/list/value/text()")
-    $evm.log("info", "GetIP --> NextIP is - #{nextip}")
+    $evm.log("info", "my_GetIP --> NextIP is - #{nextip}")
     return nextip
   rescue Exception => e
     puts e.inspect
@@ -51,7 +52,7 @@ end
 ##################################
 def fetchNetworkRef(cdir)
   begin
-    $evm.log("info", "GetIP --> Network Search - #{cdir}")
+    $evm.log("info", "my_GetIP --> Network Search - #{cdir}")
     url = 'https://' + @connection + '/wapi/v1.2.1/network'
     dooie = RestClient.get url
     doc = Nokogiri::XML(dooie)
@@ -60,7 +61,7 @@ def fetchNetworkRef(cdir)
     networks.each do | a |
       a = a.to_s
       unless a.index(cdir).nil? 
-        $evm.log("info", "GetIP --> Network Found - #{a}")
+        $evm.log("info", "my_GetIP --> Network Found - #{a}")
         return a 
       end
     end
@@ -78,7 +79,7 @@ def netmask(cdir)
   netblock = IPAddr.new(cdir)
   netins =  netblock.inspect
   netmask = netins.match(/(?<=\/)(.*?)(?=\>)/)  
-  $evm.log("info", "GetIP --> Netmask = #{netmask}")
+  $evm.log("info", "my_GetIP --> Netmask = #{netmask}")
   return netmask
 end
 
@@ -86,10 +87,10 @@ end
 # Set Options in prov	       #
 ##################################
 def set_prov(prov, hostname, ipaddr, netmask, gateway)
-  $evm.log("info", "GetIP --> Hostname = #{hostname}")
-  $evm.log("info", "GetIP --> IP Address =  #{ipaddr}")
-  $evm.log("info", "GetIP -->  Netmask = #{netmask}")
-  $evm.log("info", "GetIP -->  Gateway = #{gateway}")
+  $evm.log("info", "my_GetIP --> Hostname = #{hostname}")
+  $evm.log("info", "my_GetIP --> IP Address =  #{ipaddr}")
+  $evm.log("info", "my_GetIP -->  Netmask = #{netmask}")
+  $evm.log("info", "my_GetIP -->  Gateway = #{gateway}")
   prov.set_option(:addr_mode, ["static", "Static"])
   prov.set_option(:ip_addr, "#{ipaddr}")
   prov.set_option(:subnet_mask, "#{netmask}")
@@ -98,7 +99,7 @@ def set_prov(prov, hostname, ipaddr, netmask, gateway)
   prov.set_option(:linux_host_name, "#{hostname}")
   prov.set_option(:vm_target_hostname, "#{hostname}")
   prov.set_option(:host_name, "#{hostname}")
-  $evm.log("info", "GetIP --> #{prov.inspect}")
+  $evm.log("info", "my_GetIP --> #{prov.inspect}")
 end
 
 ##################################
@@ -119,7 +120,7 @@ def find_environment(environment)
       @network = "10.10.3.0/24"
       @dnsdomain = "prod.zone.com"
     else
-      $evm.log("info", "GetIP --> Error, environment (#{environment}) is not valid.")
+      $evm.log("info", "my_GetIP --> Error, environment (#{environment}) is not valid.")
       exit MIQ_OK
   end      
 end
@@ -139,31 +140,33 @@ server ||= $evm.object['grid_server']
 prov = $evm.root["miq_provision"]
 $evm.log("info", "#{@method} - Inspecting prov:<#{prov.inspect}>")
 
-hostname = prov.get_option(:vm_name)
-$evm.log("info","GetIP --> Hostname = #{hostname}")
+$dialog_my_vm_name = ' '
+$evm.root.attributes.sort.each { |k, v|
+   $evm.log("info","<#{@method}>: #{k}---#{v}")
+   if "#{k}" == "dialog_my_vm_name"
+     $dialog_my_vm_name = "#{v}"
+    $evm.log("info", "<#{@method}>: Found #{$dialog_my_vm_name}")
+   end
+ }
 
-host_regex = /^(.*)_(.*)/
-if host_regex =~ hostname
-  environment = $1
-else
-  $evm.log("info", "GetIP --> Hostname #{hostname} should be named (environment)_(hostname)")
-  exit MIQ_OK
-end
+
+hostname = "#{$dialog_my_vm_name}"
+environment = 'production'
+$evm.log("info","my_GetIP --> Hostname = #{hostname}")
 
 find_environment(environment)
-vmtargetname = prov.get_option(:vm_target_name)
+vmtargetname = "#{$dialog_my_vm_name}"
 
 netRef = fetchNetworkRef(@network)
 nextIPADDR = nextIP(netRef)
 result = getIP("#{vmtargetname}.#{@dnsdomain}", nextIPADDR)
 if result ==  true
-  $evm.log("info", "GetIP --> #{vmtargetname}.#{@dnsdomain} with IP Address #{nextIPADDR} created successfully")
+  $evm.log("info", "my_GetIP --> #{vmtargetname}.#{@dnsdomain} with IP Address #{nextIPADDR} created successfully")
   netmask = netmask(@network)
-  set_prov(prov, vmtargetname, nextIPADDR, netmask, @gateway)
 elsif result == false
-  $evm.log("info", "GetIP --> #{vmtargetname}.#{@dnsdomain} with IP Address #{nextIPADDR} FAILED")
+  $evm.log("info", "my_GetIP --> #{vmtargetname}.#{@dnsdomain} with IP Address #{nextIPADDR} FAILED")
 else
-  $evm.log("info", "GetIP --> unknown error")
+  $evm.log("info", "my_GetIP --> unknown error")
 end
 
 $evm.log("info", "********* InfoBlox - GetIP COMPLETED *********")
