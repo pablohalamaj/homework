@@ -1,9 +1,9 @@
-###################################
+i###################################
 #
 # EVM Automate Method: my_clone_vm
 #
 # Notes:This method is used to clone a VM with the exact same parameters as the origin
-#	but the resulting VM will have the "cloned" Tag.
+#       but the resulting VM will have the "cloned" Tag.
 #
 ###################################
 
@@ -39,18 +39,22 @@ $evm.root.attributes.sort.each { |k, v|
  }    
 
 if "#{$dialog_my_vm_name}" == "#{vm.name}"
-	$evm.log("error", "<#{@method}>: Nueva VM con mismo nombre que anterior <#{$dialog_my_vm_name}> y <#{vm.name}>")
+        $evm.log("error", "<#{@method}>: Nueva VM con mismo nombre que anterior <#{$dialog_my_vm_name}> y <#{vm.name}>")
         exit MIQ_STOP
 end
 
+$memoria_en_bytes = vm.hardware.memory_cpu.to_i * 1048576
+$evm.log("error", "<#{@method}>: Memoria en Bytes <#{$memoria_en_bytes}>")
 
 rhevm = "https://#{ext_management_system.ipaddress}/api/vms"
 rhevadmin = 'admin@internal'
 rhevadminpass = 'r3dh@t1!'
 resource = RestClient::Resource.new(rhevm, :user => rhevadmin, :password => rhevadminpass)
 
-  $evm.log("info", "<#{@method}>: ******** <vm><name>#{$dialog_my_vm_name}</name><cluster><name>#{ems_cluster.name}</name></cluster><template><name>#{$template_de_la_vm_en_rhev}</name></template><memory>#{vm.hardware.memory_cpu}</memory><os><boot dev='hd'/></os></vm>****")
-  cloneTemplate = resource.post "<vm><name>#{$dialog_my_vm_name}</name><cluster><name>#{ems_cluster.name}</name></cluster><template><name>#{$template_de_la_vm_en_rhev}</name></template><memory>#{vm.hardware.memory_cpu}</memory><os><boot dev='hd'/></os></vm>", :content_type => 'application/xml', :accept => 'application/xml'
+$evm.log("info", "<#{@method}>: Le vamos a pegar a https://#{ext_management_system.ipaddress}/api/vms")
+
+  $evm.log("info", "<#{@method}>: ******** <vm><name>#{$dialog_my_vm_name}</name><cluster><name>#{ems_cluster.name}</name></cluster><template><name>rhel</name></template><memory>#{$memoria_en_bytes}</memory><os><boot dev='hd'/></os></vm>****")
+  cloneTemplate = resource.post "<vm><name>#{$dialog_my_vm_name}</name><cluster><name>#{ems_cluster.name}</name></cluster><template><name>rhel</name></template><memory>#{$memoria_en_bytes}</memory><os><boot dev='hd'/></os></vm>", :content_type => 'application/xml', :accept => 'application/xml'
   $evm.log("info", "Result - #{cloneTemplate}")
 
 
@@ -60,4 +64,3 @@ resource = RestClient::Resource.new(rhevm, :user => rhevadmin, :password => rhev
 #
 $evm.log("info", "Automate Method Ended")
 exit MIQ_OK
-
