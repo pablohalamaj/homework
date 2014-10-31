@@ -26,40 +26,29 @@ begin
   $evm.log("info", "Got Host <#{host.name}> from VM <#{vm.name}>")
   $evm.log("info","Inspecting host: #{host.inspect}") if @debug
 
-
-  #Find the tags of the vm 
-  unless vm.tags.nil?
-  tag           = "cloned"
-  vm.tags.sort.each {|tag_element| tag_text = tag_element.split('/');
-    $evm.log("info", "#{@method} - VM:<#{vm.name}> Category:<#{tag_text.first.inspect}> Tag:<#{tag_text.last.inspect}>")
-    first_tag = tag_text.first
-    second_tag = tag_text.second
-    if first_tag == "cloned"
-      $evm.log("error", "<#{@method}>: VM Tagged with <#{tag_text.first.inspect}> y <#{tag_text.second.inspect}>")
-        exit MIQ_STOP
-    else
-      $evm.log("")
-    end }
-   end
-
-
-  if tagged_vm == nil
-          #
-          # Exit method
-          #
-          $evm.log("info", "<#{@method}>--===== #{vm.name} tagged with tag #{tag} =========")
-          $evm.log("info", "===== EVM Automate Method: <#{@method}> Ended")
-          exit MIQ_OK
-  else
-  #
-  # Set Ruby rescue behavior
-  #
-        $evm.log("info", "<#{@method}>--===== #{vm.name} not tagged with tag #{tag} =========")
-        $evm.log("info", "===== EVM Automate Method: <#{@method}> Ended")
-        exit MIQ_STOP
+  tags = vm.tags
+ 
+  $evm.log("info", "#{@method} Template Tags - #{vm.tags}")
+ 
+  tags.each  do  |t|
+   s = t.split("/")
+    if s[0] == 'cloned'
+      if s[1] == 'true'
+        $evm.log("error", "<#{@method}>: VM Tagged with <#{s[0]}> y <#{s[1]}>")
+        exit MIQ_ABORT
+      end
+    end
   end
+  
+  #
+  # Exit method
+  #
+  $evm.log("info", "<#{@method}>--===== #{vm.name} not tagged with tag cloned ========")
+  $evm.log("info", "===== EVM Automate Method: <#{@method}> Ended")
+  exit MIQ_OK
 
-        rescue => err
-        $evm.log("error", "<#{@method}>: [#{err}]\n#{err.backtrace.join("\n")}")
-        exit MIQ_STOP
+  rescue => err
+  $evm.log("error", "<#{@method}>: [#{err}]\n#{err.backtrace.join("\n")}")
+  exit MIQ_STOP
 end
+

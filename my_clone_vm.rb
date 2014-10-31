@@ -25,16 +25,16 @@ vm = $evm.root['vm']
 ext_management_system = vm.ext_management_system
 ems_cluster = vm.ems_cluster
 
-$evm.log("info", "VM Name - #{vm.name}")
-$evm.log("info", "RHEVM Name - #{ext_management_system.name}")
-$evm.log("info", "Cluster Name - #{ems_cluster.name}")
+$evm.log("info", "<#{@method}>: VM Name - #{vm.name}")
+$evm.log("info", "<#{@method}>: RHEVM Name - #{ext_management_system.name}")
+$evm.log("info", "<#{@method}>: Cluster Name - #{ems_cluster.name}")
 
 $dialog_my_vm_name = ' '
 $evm.root.attributes.sort.each { |k, v| 
-   $evm.log("info","#{k}---#{v}") 
+   $evm.log("info","<#{@method}>: #{k}---#{v}") 
    if "#{k}" == "dialog_my_vm_name" 
      $dialog_my_vm_name = "#{v}"
-    $evm.log("info", "Found #{$dialog_my_vm_name}")
+    $evm.log("info", "<#{@method}>: Found #{$dialog_my_vm_name}")
    end
  }    
 
@@ -49,8 +49,8 @@ rhevadmin = 'admin@internal'
 rhevadminpass = 'r3dh@t1!'
 resource = RestClient::Resource.new(rhevm, :user => rhevadmin, :password => rhevadminpass)
 
-  $evm.log("info", "******** <vm><name>#{$dialog_vm_prefix}</name><cluster><name>#{ems_cluster.name}</name></cluster><template><name>#{vm.name}</name></template><memory>#{vm.hardware.memory_cpu}</memory><os><boot dev='hd'/></os></vm>****")
-  cloneTemplate = resource.post "<vm><name>#{$dialog_vm_prefix}</name><cluster><name>#{ems_cluster.name}</name></cluster><template><name>#{vm.name}</name></template><memory>#{vm.hardware.memory_cpu}</memory><os><boot dev='hd'/></os></vm>", :content_type => 'application/xml', :accept => 'application/xml'
+  $evm.log("info", "<#{@method}>: ******** <vm><name>#{dialog_vm_prefix}</name><cluster><name>#{ems_cluster.name}</name></cluster><template><name>#{vm.name}</name></template><memory>#{vm.hardware.memory_cpu}</memory><os><boot dev='hd'/></os></vm>****")
+  cloneTemplate = resource.post "<vm><name>#{dialog_vm_prefix}</name><cluster><name>#{ems_cluster.name}</name></cluster><template><name>#{vm.name}</name></template><memory>#{vm.hardware.memory_cpu}</memory><os><boot dev='hd'/></os></vm>", :content_type => 'application/xml', :accept => 'application/xml'
   $evm.log("info", "Result - #{cloneTemplate}")
 
 
