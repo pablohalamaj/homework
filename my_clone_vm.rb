@@ -49,8 +49,8 @@ rhevadmin = 'admin@internal'
 rhevadminpass = 'r3dh@t1!'
 resource = RestClient::Resource.new(rhevm, :user => rhevadmin, :password => rhevadminpass)
 
-  $evm.log("info", "<#{@method}>: ******** <vm><name>#{dialog_vm_prefix}</name><cluster><name>#{ems_cluster.name}</name></cluster><template><name>#{vm.name}</name></template><memory>#{vm.hardware.memory_cpu}</memory><os><boot dev='hd'/></os></vm>****")
-  cloneTemplate = resource.post "<vm><name>#{dialog_vm_prefix}</name><cluster><name>#{ems_cluster.name}</name></cluster><template><name>#{vm.name}</name></template><memory>#{vm.hardware.memory_cpu}</memory><os><boot dev='hd'/></os></vm>", :content_type => 'application/xml', :accept => 'application/xml'
+  $evm.log("info", "<#{@method}>: ******** <vm><name>#{$dialog_my_vm_name}</name><cluster><name>#{ems_cluster.name}</name></cluster><template><name>#{$template_de_la_vm_en_rhev}</name></template><memory>#{vm.hardware.memory_cpu}</memory><os><boot dev='hd'/></os></vm>****")
+  cloneTemplate = resource.post "<vm><name>#{$dialog_my_vm_name}</name><cluster><name>#{ems_cluster.name}</name></cluster><template><name>#{$template_de_la_vm_en_rhev}</name></template><memory>#{vm.hardware.memory_cpu}</memory><os><boot dev='hd'/></os></vm>", :content_type => 'application/xml', :accept => 'application/xml'
   $evm.log("info", "Result - #{cloneTemplate}")
 
 
